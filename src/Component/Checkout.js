@@ -1,41 +1,21 @@
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { HiX } from "react-icons/hi";
-
-const products = [
-  {
-    id: 1,
-    name: "Throwback Hip Bag",
-    href: "#",
-    color: "Salmon",
-    price: "$90.00",
-    quantity: 1,
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
-    imageAlt:
-      "Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.",
-  },
-  {
-    id: 2,
-    name: "Medium Stuff Satchel",
-    href: "#",
-    color: "Blue",
-    price: "$32.00",
-    quantity: 1,
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg",
-    imageAlt:
-      "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
-  },
-  // More products...
-];
+import { useSelector, useDispatch } from "react-redux";
+import { remove } from "../Store/cartSlice";
 
 export default function Checkout() {
   const [open, setOpen] = useState(true);
 
+  const products = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+
+  const removeCart = (productId) => {
+    dispatch(remove(productId));
+  };
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+      <Dialog as="div" className="relative z-[10]" onClose={setOpen}>
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"
@@ -89,8 +69,8 @@ export default function Checkout() {
                               <li key={product.id} className="flex py-6">
                                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                   <img
-                                    src={product.imageSrc}
-                                    alt={product.imageAlt}
+                                    src={product.image}
+                                    alt={product.title}
                                     className="h-full w-full object-cover object-center"
                                   />
                                 </div>
@@ -98,11 +78,7 @@ export default function Checkout() {
                                 <div className="ml-4 flex flex-1 flex-col">
                                   <div>
                                     <div className="flex justify-between text-base font-medium text-gray-900">
-                                      <h3>
-                                        <a href={product.href}>
-                                          {product.name}
-                                        </a>
-                                      </h3>
+                                      <h3>{product.title}</h3>
                                       <p className="ml-4">{product.price}</p>
                                     </div>
                                     <p className="mt-1 text-sm text-gray-500">
@@ -110,12 +86,9 @@ export default function Checkout() {
                                     </p>
                                   </div>
                                   <div className="flex flex-1 items-end justify-between text-sm">
-                                    <p className="text-gray-500">
-                                      Qty {product.quantity}
-                                    </p>
-
                                     <div className="flex">
                                       <button
+                                        onClick={() => removeCart(product.id)}
                                         type="button"
                                         className="font-medium text-indigo-600 hover:text-indigo-500"
                                       >
